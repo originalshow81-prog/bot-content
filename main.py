@@ -39,7 +39,7 @@ Răspunde ÎNTOTDEAUNA în limba română."""
 def genereaza(prompt: str) -> str:
     try:
         response = client.models.generate_content(
-            model="gemini-2.0-flash-lite",
+            model="gemini-1.5-flash",
             contents=SYSTEM_PROMPT + "\n\n" + prompt
         )
         return response.text
