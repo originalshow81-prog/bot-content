@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 genai.configure(api_key=GEMINI_KEY)
-model = genai.GenerativeModel("gemini-1.5-flash")
+model = genai.GenerativeModel("gemini-2.0-flash")
 
 SYSTEM_PROMPT = """Ești un expert în marketing și storytelling pentru rețele sociale (TikTok, Instagram).
 Ajuți un creator de conținut care vinde mașini tip Lego (altă marcă), modele 1:8 și 1:10,
