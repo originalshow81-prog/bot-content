@@ -1,6 +1,6 @@
 import os
 import logging
-from google import genai
+from groq import Groq
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application, CommandHandler, MessageHandler,
@@ -8,19 +8,19 @@ from telegram.ext import (
 )
 
 TOKEN = os.environ.get("BOT_TOKEN")
-GEMINI_KEY = os.environ.get("GEMINI_API_KEY")
+GROQ_KEY = os.environ.get("GROQ_API_KEY")
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-client = genai.Client(api_key=GEMINI_KEY)
+client = Groq(api_key=GROQ_KEY)
 
 SYSTEM_PROMPT = """Ești un expert în marketing și storytelling pentru rețele sociale (TikTok, Instagram).
 Ajuți un creator de conținut care vinde mașini tip Lego (altă marcă), modele 1:8 și 1:10,
 lungime 50-60 cm, 2500-4000 piese, calitate premium.
-Publicul este mixt: copii, adulți, colecționari, oameni care caută cadouri speciale.
+Publicul: copii, adulți, colecționari, oameni care caută cadouri speciale.
 
-Stilul de storytelling al creatorului:
+Stilul de storytelling:
 - Personal, sincer, ca o poveste reală
 - Nu vinde direct — povestește o experiență
 - Detalii tehnice transformate în emoții
@@ -38,11 +38,15 @@ Răspunde ÎNTOTDEAUNA în limba română."""
 
 def genereaza(prompt: str) -> str:
     try:
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=SYSTEM_PROMPT + "\n\n" + prompt
+        response = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=1024
         )
-        return response.text
+        return response.choices[0].message.content
     except Exception as e:
         logger.error(f"Eroare API: {e}")
         return f"❌ Eroare: {str(e)}"
